@@ -6,12 +6,12 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 17:12:09 by samusanc          #+#    #+#             */
-/*   Updated: 2023/04/21 20:52:21 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/04/26 17:15:15 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
 
-char	*ft_make_r(char *r, int fd)
+char	*ft_make_r(char *r, int fd, int *v)
 {
 	r = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!r)
@@ -23,6 +23,7 @@ char	*ft_make_r(char *r, int fd)
 		r = NULL;
 		return (NULL);
 	}
+	*v = 0;
 	return (r);
 }
 

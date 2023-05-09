@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/20 17:12:09 by samusanc          #+#    #+#             */
-/*   Updated: 2023/04/21 20:52:17 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/04/26 17:17:06 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -31,18 +31,20 @@ char	*get_next_line(int fd)
 {
 	static char	*db[OPEN_MAX];
 	char		*r;
+	int			v;
 
+	v = 0;
 	r = db[fd];
 	if (!r)
 	{
-		r = ft_make_r(r, fd);
+		r = ft_make_r(r, fd, &v);
 		if (!r)
 			return (NULL);
 		db[fd] = r;
 	}
-	while (ft_verify(db[fd]) == -1)
+	while (ft_verify(db[fd]) == -1 && v == 0)
 	{
-		r = ft_make_r(r, fd);
+		r = ft_make_r(r, fd, &v);
 		if (!r)
 			return (NULL);
 		r = ft_realloc(db, fd, r, 0);
