@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:54:20 by samusanc          #+#    #+#             */
-/*   Updated: 2023/05/17 19:34:34 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/05/17 20:47:21 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include"get_next_line.h"
@@ -89,7 +89,7 @@ char	*ft_naruto_ch(char *db[OPEN_MAX][2], int fd, int *i, int x)
 	{
 		while (db[fd][0][*i] != '\n' && db[fd][0][*i] != '\r')
 			*i = *i + 1;
-		result = malloc(sizeof(char) * (*i + 1));
+		result = malloc(sizeof(char) * (*i + 2));
 		if (!result)
 			return ((char *)ft_free(&db[fd][0]));
 		return (result);
@@ -105,14 +105,16 @@ char	*ft_naruto_ch(char *db[OPEN_MAX][2], int fd, int *i, int x)
 
 char	*ft_ch_sp(char *db[OPEN_MAX][2], int fd, int i, int j)
 {
-	char	*result;
+	char	*result = "hola";
 	char	*strsave;
 	int		k;
 
+	k = 0;
 	result = ft_naruto_ch(db, fd, &i, 0);
 	if (!result)
 		return (0);
-	result[i] = '\0';
+	result[i] = '\n';
+	result[i + 1] = '\0';
 	while (j <= i)
 		result[j++] = db[fd][0][k++];
 	i = 0;
@@ -120,7 +122,7 @@ char	*ft_ch_sp(char *db[OPEN_MAX][2], int fd, int i, int j)
 		++i;
 	strsave = ft_naruto_ch(db, fd, &i, 1);
 	if (!strsave)
-		return (0);
+		return ((char *)ft_free(&result));
 	strsave[i] = '\0';
 	k = 0;
 	while (k != i)
@@ -130,6 +132,25 @@ char	*ft_ch_sp(char *db[OPEN_MAX][2], int fd, int i, int j)
 	db[fd][0] = strsave;
 	return (result);
 }
+
+char *ft_memcpy(char *s, int i)
+{
+	int	j;
+	char *str;
+
+	j = 0;
+	str = malloc(sizeof(char) * (i + 1));
+	if (!str)
+		return (0);
+	str[i] = '\0';
+	while (j != i)
+	{
+		str[j] = s[j];
+		++j;
+	}
+	return (str);
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*db[OPEN_MAX][2];
@@ -139,13 +160,12 @@ char	*get_next_line(int fd)
 
 	i = 1;
 	result = NULL;
+	if (fd < 0 || BUFFER_SIZE < 0 || fd > OPEN_MAX)
+		return (0);
 	while(i)
 	{
 		if (ft_verify(db, fd))
-		{
-			break ;
-		}
-		//	return (ft_ch_sp(db, fd, 0, 0));
+			return (ft_ch_sp(db, fd, 0, 0));
 		i = read(fd, s, BUFFER_SIZE);
 		if (i < 0)
 			return ((char *)ft_free(&db[fd][0]));
@@ -155,10 +175,14 @@ char	*get_next_line(int fd)
 		if (!ft_realloc(db, fd, s, i))
 			return (0);
 	}
-	//ft_ch_sp(db, fd, 0, 0);
-	printf("%s", db[fd][0]);
-	//result = ft_memcpy(db[fd][0], db[fd][1]);
-	db[fd][0] = (char *)ft_free(&db[fd][0]);
+	result = ft_memcpy(db[fd][0], ft_rnw_i("R", db, fd, 0));
+	ft_free(&db[fd][0]);
+	ft_free(&db[fd][1]);
+	if(!*result)
+	{
+		ft_free(&result);
+		return (NULL);
+	}
 	return (result);
 }
 
